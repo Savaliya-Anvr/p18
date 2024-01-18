@@ -2,7 +2,14 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class First(BaseModel):
-    title: str = 'that is all'
-    price: int = 78
-    author: Optional[bool] = None
+class Blog(BaseModel):
+    title: str
+    body: str
+    price: int
+
+
+class Bank(BaseModel):
+    surname: str
+    name: str
+    balance: int
+

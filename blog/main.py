@@ -1,16 +1,37 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import uvicorn
 from .database import SessionLocal, engine
+from sqlalchemy.orm import Session
 from . import schemas, models
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
 
-@app.post('/blog')
-def create_blog(blog: schemas.First):
-    return {f'Title of the blog is { blog.title} and price is {blog.price}'}
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
+
+@app.post('/blog')
+def create_blog(request: schemas.Blog, db:Session = Depends(get_db)):
+    new_blog = models.Blog(title=request.title, body=request.body, price=request.price)
+    db.add(new_blog)
+    db.commit()
+    db.refresh(new_blog)
+    return new_blog
+
+
+@app.post('/bank')
+def create_bank(bank: schemas.Bank, db:Session = Depends(get_db)):
+    new_bank = models.Bank(surname=bank.surname, name=bank.name, balance=bank.balance)
+    db.add(new_bank)
+    db.commit()
+    db.refresh(new_bank)
+    return new_bank
 
 
 if __name__ == '__main__':

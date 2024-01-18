@@ -8,3 +8,13 @@ class Blog(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     body = Column(String)
+    price = Column(Integer)
+
+
+class Bank(Base):
+    __tablename__ = 'banks'
+
+    id = Column(Integer, primary_key=True, index=True)
+    surname = Column(String)
+    name = Column(String)
+    balance = Column(Integer)
