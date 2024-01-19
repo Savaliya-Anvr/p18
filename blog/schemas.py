@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 class Blog(BaseModel):
@@ -8,12 +8,22 @@ class Blog(BaseModel):
     price: int
 
 
+class Showuser(BaseModel):
+    name:str
+    email:str
+    blog:List[Blog]
+
+
 class Shown(BaseModel):
     title: str
     price: int
-    # class Config():
-    #     orm_mode = True
-    #
+    creator: Showuser
+
+
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
 
 
 class Bank(BaseModel):
@@ -22,12 +32,4 @@ class Bank(BaseModel):
     balance: int
 
 
-class User(BaseModel):
-    name: str
-    email: str
-    password: str
-
-class Showuser(BaseModel):
-    name:str
-    email:str
 
