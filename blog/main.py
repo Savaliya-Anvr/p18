@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Depends, Response, status, HTTPException
 import uvicorn
+from typing import List
+from passlib.context import CryptContext
 from .database import SessionLocal, engine
 from sqlalchemy.orm import Session
 from . import schemas, models
+from .hashing import Hash
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
@@ -57,7 +60,7 @@ def update(id, request: schemas.Blog, db: Session = Depends(get_db)):
     return 'Updated'
 
 
-@app.get('/blog/{id}', status_code=200)
+@app.get('/blog/{id}', status_code=200, response_model=schemas.Shown)
 def show(id, response:Response, db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blogs:
@@ -67,12 +70,32 @@ def show(id, response:Response, db: Session = Depends(get_db)):
     return blogs
 
 
-@app.get('/blog')
+@app.get('/blog', response_model=List[schemas.Shown])
 def show(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
 
     return blogs
 
 
-if __name__ == '__main__':
-    uvicorn.run(app)
+pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+@app.post('/user',response_model=schemas.Showuser)
+def user(request: schemas.User, db: Session = Depends(get_db)):
+
+    new_user = models.User(name=request.name, email=request.email, password=Hash.bcrypt(request.password))
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+
+@app.get('/user/{id}', status_code=200, response_model=schemas.Showuser)
+def show(id, db: Session = Depends(get_db)):
+    users = db.query(models.User).filter(models.User.id == id).first()
+    if not users:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'User with the id {id} is not available')
+
+    return users
+

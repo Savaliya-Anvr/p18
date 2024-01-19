@@ -8,8 +8,26 @@ class Blog(BaseModel):
     price: int
 
 
+class Shown(BaseModel):
+    title: str
+    price: int
+    # class Config():
+    #     orm_mode = True
+    #
+
+
 class Bank(BaseModel):
     surname: str
     name: str
     balance: int
+
+
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
+
+class Showuser(BaseModel):
+    name:str
+    email:str
 
