@@ -9,9 +9,9 @@ class Blog(BaseModel):
 
 
 class Showuser(BaseModel):
-    name:str
-    email:str
-    blog:List[Blog]
+    name: str
+    email: str
+    blog: List[Blog]
 
 
 class Shown(BaseModel):
@@ -32,4 +32,7 @@ class Bank(BaseModel):
     balance: int
 
 
+class showbank(BaseModel):
+    name: str
+    balance: int
 
