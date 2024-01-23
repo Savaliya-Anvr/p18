@@ -6,11 +6,12 @@ from .database import get_db, engine
 from sqlalchemy.orm import Session
 from . import schemas, models
 from .hashing import Hash
-from .routers import blog, user, bank
+from .routers import blog, user, bank, authentication
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
+app.include_router(authentication.router)
 app.include_router(blog.router)
 app.include_router(user.router)
 app.include_router(bank.router)
